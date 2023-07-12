@@ -11,7 +11,7 @@ function isFullUrl(url) {
   }
 }
 
-async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 12500 }) {
+async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 12500, waitFor = 0 }) {
   // Must be between 3000 and 8500
   timeout = Math.min(Math.max(timeout, 4000), 12500);
 
@@ -48,6 +48,9 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   if(response === false) { // timed out, resolved false
     await page.evaluate(() => window.stop());
   }
+
+  // Additional wait for JavaScript
+  await page.waitFor(waitFor);
 
   // let statusCode = response.status();
   // TODO handle 4xx/5xx status codes better
