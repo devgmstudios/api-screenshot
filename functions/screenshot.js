@@ -69,7 +69,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   };
 
   if(format === "jpeg") {
-    options.quality = 80;
+    options.quality = 100;
   }
 
   let output = await page.screenshot(options);
