@@ -13,7 +13,7 @@ function isFullUrl(url) {
 
 async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 12500 }) {
   // Must be between 3000 and 8500
-  timeout = Math.min(Math.max(timeout, 3000), 12500);
+  timeout = Math.min(Math.max(timeout, 4000), 12500);
 
   const browser = await chromium.puppeteer.launch({
     executablePath: await chromium.executablePath,
@@ -41,7 +41,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
     new Promise(resolve => {
       setTimeout(() => {
         resolve(false); // false is expected below
-      }, timeout - 1500); // we need time to execute the window.stop before the top level timeout hits
+      }, timeout - 1000); // we need time to execute the window.stop before the top level timeout hits
     }),
   ]);
 
@@ -120,7 +120,7 @@ async function handler(event, context) {
 
   let timeout;
   if(pathOptions.timeout) {
-    timeout = pathOptions.timeout * 1000;
+    timeout = pathOptions.timeout * 2000;
   }
 
   // Set Defaults
