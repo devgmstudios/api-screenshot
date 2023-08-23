@@ -50,8 +50,8 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   }
 
   // Additional wait for JavaScript
-  await page.waitFor(waitFor);
-
+  await page.waitFor(15000);
+  await page.waitForTimeout(12000);
   // let statusCode = response.status();
   // TODO handle 4xx/5xx status codes better
 
