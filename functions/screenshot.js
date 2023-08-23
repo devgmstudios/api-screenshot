@@ -13,7 +13,7 @@ function isFullUrl(url) {
 
 async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 12500, waitFor = 0 }) {
   // Must be between 3000 and 8500
-  timeout = Math.min(Math.max(timeout, 4000), 12500);
+  timeout = Math.min(Math.max(timeout, 5000), 22500);
 
   const browser = await chromium.puppeteer.launch({
     executablePath: await chromium.executablePath,
@@ -123,7 +123,7 @@ async function handler(event, context) {
 
   let timeout;
   if(pathOptions.timeout) {
-    timeout = pathOptions.timeout * 2000;
+    timeout = pathOptions.timeout * 3000;
   }
 
   // Set Defaults
@@ -208,7 +208,7 @@ async function handler(event, context) {
       // HOWEVER a 200 means that if it times out on the first attempt it will stay the default image until the next build.
       statusCode: 200,
       // HOWEVER HOWEVER, we can set a ttl of 3600 which means that the image will be re-requested in an hour.
-      ttl: 800,
+      ttl: 400,
       headers: {
         "content-type": "image/svg+xml",
         "x-error-message": error.message
