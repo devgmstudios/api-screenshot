@@ -11,9 +11,9 @@ function isFullUrl(url) {
   }
 }
 
-async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 12500, waitFor = 10000 }) { 
+async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 8500 }) {
   // Must be between 3000 and 8500
-  timeout = Math.min(Math.max(timeout, 5000), 9500);
+  timeout = Math.min(Math.max(timeout, 3000), 8500);
 
   const browser = await chromium.puppeteer.launch({
     executablePath: await chromium.executablePath,
@@ -31,7 +31,6 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   if(!withJs) {
     page.setJavaScriptEnabled(false);
   }
-  page.setJavaScriptEnabled(true);
 
   let response = await Promise.race([
     page.goto(url, {
@@ -41,7 +40,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
     new Promise(resolve => {
       setTimeout(() => {
         resolve(false); // false is expected below
-      }, timeout - 1000); // we need time to execute the window.stop before the top level timeout hits
+      }, timeout - 1500); // we need time to execute the window.stop before the top level timeout hits
     }),
   ]);
 
@@ -49,9 +48,6 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
     await page.evaluate(() => window.stop());
   }
 
-  // Additional wait for JavaScript
-  await page.waitFor(9000);
-  await page.waitForTimeout(9500);
   // let statusCode = response.status();
   // TODO handle 4xx/5xx status codes better
 
@@ -69,7 +65,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   };
 
   if(format === "jpeg") {
-    options.quality = 100;
+    options.quality = 80;
   }
 
   let output = await page.screenshot(options);
@@ -123,7 +119,7 @@ async function handler(event, context) {
 
   let timeout;
   if(pathOptions.timeout) {
-    timeout = pathOptions.timeout * 3000;
+    timeout = pathOptions.timeout * 1000;
   }
 
   // Set Defaults
@@ -208,7 +204,7 @@ async function handler(event, context) {
       // HOWEVER a 200 means that if it times out on the first attempt it will stay the default image until the next build.
       statusCode: 200,
       // HOWEVER HOWEVER, we can set a ttl of 3600 which means that the image will be re-requested in an hour.
-      ttl: 400,
+      ttl: 800,
       headers: {
         "content-type": "image/svg+xml",
         "x-error-message": error.message
