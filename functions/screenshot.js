@@ -13,7 +13,7 @@ function isFullUrl(url) {
 
 async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 12500, waitFor = 10000 }) { 
   // Must be between 3000 and 8500
-  timeout = Math.min(Math.max(timeout, 5000), 22500);
+  timeout = Math.min(Math.max(timeout, 5000), 9500);
 
   const browser = await chromium.puppeteer.launch({
     executablePath: await chromium.executablePath,
@@ -50,8 +50,8 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   }
 
   // Additional wait for JavaScript
-  await page.waitFor(15000);
-  await page.waitForTimeout(12000);
+  await page.waitFor(9000);
+  await page.waitForTimeout(9500);
   // let statusCode = response.status();
   // TODO handle 4xx/5xx status codes better
 
