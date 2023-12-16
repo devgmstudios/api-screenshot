@@ -58,7 +58,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   };
 
   if(format === "jpeg") {
-    options.quality = 80;
+    options.quality = 90;
   }
 
   let output = await page.screenshot(options);
@@ -70,8 +70,8 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 
 async function handler(event, context) {
   let pathSplit = event.path.split("/").filter(entry => !!entry);
-  let [encodedUrl, customSize, format] = pathSplit.slice(pathSplit.length - 3); // Adjust this line to slice the last three segments of the path
-  let viewport = [];
+  let [encodedUrl, customSize, format] = pathSplit.slice(pathSplit.length - 3); // Extract the last three segments of the path
+  let viewport = [300, 300]; // Default size
 
   if (customSize) {
     let dimensions = customSize.split('x').map(Number);
@@ -86,10 +86,6 @@ async function handler(event, context) {
   try {
     if(!isFullUrl(url)) {
       throw new Error(`Invalid \`url\`: ${url}`);
-    }
-
-    if(!viewport || viewport.length !== 2) {
-      throw new Error("Invalid custom size. Format should be WidthxHeight, e.g., 800x640.");
     }
 
     let output = await screenshot(url, {
