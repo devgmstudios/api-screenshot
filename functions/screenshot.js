@@ -6,13 +6,11 @@ function isFullUrl(url) {
     new URL(url);
     return true;
   } catch(e) {
-    // invalid url OR local path
     return false;
   }
 }
 
 async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait, timeout = 8500 }) {
-  // Must be between 3000 and 8500
   timeout = Math.min(Math.max(timeout, 3000), 8500);
 
   const browser = await chromium.puppeteer.launch({
@@ -38,13 +36,11 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
       timeout,
     }),
     new Promise(resolve => {
-      setTimeout(() => {
-        resolve(false); // false is expected below
-      }, timeout - 1500); // we need time to execute the window.stop before the top level timeout hits
+      setTimeout(() => resolve(false), timeout - 1500);
     }),
   ]);
 
-  if(response === false) { // timed out, resolved false
+  if(response === false) {
     await page.evaluate(() => window.stop());
   }
 
@@ -74,10 +70,9 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 
 async function handler(event, context) {
   let pathSplit = event.path.split("/").filter(entry => !!entry);
-  let [url, customSize, format] = pathSplit;
+  let [encodedUrl, customSize, format] = pathSplit.slice(pathSplit.length - 3); // Adjust this line to slice the last three segments of the path
   let viewport = [];
 
-  // Custom size e.g. 800x640
   if (customSize) {
     let dimensions = customSize.split('x').map(Number);
     if (dimensions.length === 2 && dimensions.every(n => !isNaN(n))) {
@@ -85,7 +80,7 @@ async function handler(event, context) {
     }
   }
 
-  url = decodeURIComponent(url);
+  let url = decodeURIComponent(encodedUrl);
   format = format || "jpeg"; // Default format
 
   try {
