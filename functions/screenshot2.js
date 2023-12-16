@@ -71,7 +71,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 async function handler(event, context) {
   let pathSplit = event.path.split("/").filter(entry => !!entry);
   let [encodedUrl, customSize, format] = pathSplit.slice(pathSplit.length - 3); // Extract the last three segments of the path
-  let viewport = [300, 300]; // Default size
+  let viewport = [800, 640]; // Default size
 
   if (customSize) {
     let dimensions = customSize.split('x').map(Number);
