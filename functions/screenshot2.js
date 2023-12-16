@@ -82,6 +82,10 @@ async function handler(event, context) {
 
   let url = decodeURIComponent(encodedUrl);
   format = format || "jpeg"; // Default format
+  
+  let cacheBuster = Date.now();
+  url += (url.includes('?') ? '&' : '?') + 'cacheBust=' + cacheBuster;
+
 
   try {
     if(!isFullUrl(url)) {
