@@ -70,21 +70,22 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 
 async function handler(event, context) {
   let pathSplit = event.path.split("/").filter(entry => !!entry);
-  let [encodedUrl, customSize, format] = pathSplit.slice(pathSplit.length - 3); // Extract the last three segments of the path
+  let [encodedUrl, customSize, format] = pathSplit.slice(-3); // Get the last three segments of the path
 
-  // Attempt to decode the URL, or use as is if it's already decoded
+  // Handle both URL-encoded and non-encoded URLs
   let url;
-  try {
+  if (encodedUrl.includes('%3A') || encodedUrl.includes('%2F')) {
+    // URL seems to be encoded
     url = decodeURIComponent(encodedUrl);
-    if (!isFullUrl(url)) {
-      url = encodedUrl; // Use the original string if the decoded one isn't a valid URL
-    }
-  } catch (e) {
-    url = encodedUrl; // Use the original string if decoding throws an error
+  } else {
+    // Construct URL from the remaining path segments
+    let urlSegments = pathSplit.slice(pathSplit.length - 3);
+    url = urlSegments.join('/');
+    url = url.substring(0, url.indexOf('/') + 1); // Extract URL before size parameter
   }
 
+  // Set the viewport size
   let viewport = [300, 300]; // Default size
-
   if (customSize) {
     let dimensions = customSize.split('x').map(Number);
     if (dimensions.length === 2 && dimensions.every(n => !isNaN(n))) {
