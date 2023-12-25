@@ -85,9 +85,6 @@ async function handler(event, context) {
   // Replace '___' with actual slashes
   let url = decodeURIComponent(encodedUrl).replace(/___/g, '/');
   format = format || "jpeg"; // Default format
-  
-  let cacheBuster = Date.now();
-  url += (url.includes('?') ? '&' : '?') + 'cacheBust=' + cacheBuster;
 
   try {
     if(!isFullUrl(url)) {
