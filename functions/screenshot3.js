@@ -70,7 +70,7 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
 
 async function handler(event, context) {
   let pathSplit = event.path.split("/").filter(entry => !!entry);
-  let [base64EncodedUrl, customSize, format] = pathSplit.slice(pathSplit.length - 3); 
+  let [encodedUrl, customSize, format] = pathSplit.slice(pathSplit.length - 3); // Extract the last three segments of the path
   let viewport = [800, 640]; // Default size
 
   if (customSize) {
@@ -80,8 +80,8 @@ async function handler(event, context) {
     }
   }
 
-  // Decode Base64 URL
-  let url = Buffer.from(base64EncodedUrl, 'base64').toString('utf8');
+  // Replace __SLASH__ with actual slashes
+  let url = decodeURIComponent(encodedUrl).replace(/__SLASH__/g, '/');
   format = format || "jpeg"; // Default format
   
   let cacheBuster = Date.now();
@@ -99,6 +99,8 @@ async function handler(event, context) {
       wait: ["load"]
     });
 
+    console.log(url, format, { viewport });
+
     return {
       statusCode: 200,
       headers: {
@@ -108,6 +110,8 @@ async function handler(event, context) {
       isBase64Encoded: true
     };
   } catch (error) {
+    console.log("Error", error);
+
     return {
       statusCode: 500,
       headers: {
