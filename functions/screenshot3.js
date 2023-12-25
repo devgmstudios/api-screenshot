@@ -68,6 +68,8 @@ async function screenshot(url, { format, viewport, dpr = 1, withJs = true, wait,
   return output;
 }
 
+// ... (rest of the script remains the same)
+
 async function handler(event, context) {
   let pathSplit = event.path.split("/").filter(entry => !!entry);
   let [encodedUrl, customSize, format] = pathSplit.slice(pathSplit.length - 3); // Extract the last three segments of the path
@@ -80,8 +82,8 @@ async function handler(event, context) {
     }
   }
 
-  // Replace __SLASH__ with actual slashes
-  let url = decodeURIComponent(encodedUrl).replace(/__SLASH__/g, '/');
+  // Replace '___' with actual slashes
+  let url = decodeURIComponent(encodedUrl).replace(/___/g, '/');
   format = format || "jpeg"; // Default format
   
   let cacheBuster = Date.now();
